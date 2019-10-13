@@ -1,0 +1,127 @@
+# This file can be used to start multiple containers supporting the SOLA Registry solution. Use the command
+# docker-compose up -d. It will take up to 3 minutes before the SOLA Registry services can be accessed. 
+version: '3' 
+
+networks:
+    sola_cs: 
+    
+volumes:
+   sola_cs_data:
+      driver: local
+    
+services:
+    db:
+        # DB server hosting SOLA SR database. To connect to this db; hostname=database, user=postgres, passwd=sola
+        image: npullar/sola-community-db
+        ports:
+         - "5432:5432"
+        container_name: sola-db
+        environment:
+          POSTGRES_PASSWORD: sola
+          CREATE_SOLA_DB: y
+          SOLA_LOAD_DATA: y
+        networks:
+           sola_cs:
+               aliases:
+                 - database
+        volumes:
+         - sola_cs_data:/var/lib/postgresql/data
+#            - $HOME/sola-docker-data/postgres-data/cs-data:/var/lib/postgresql/data 
+    server:
+        image: npullar/sola-community-server
+        restart: always
+        container_name: sola-srv
+        ports:
+         - "4848:4848"
+         - "8080:8080"
+         - "8181:8181"
+        depends_on:
+         - db
+        environment:
+          WAIT_TIME: 180
+#          WAIT_TIME: 300
+#        volumes:
+#            - $HOME/sola-docker-data/payara5:/opt/payara5
+        networks:
+           sola_cs:
+       
+    jasperserver:
+        image: retriever/jasperserver:6.3.0
+        container_name: jasperserver
+        restart: always
+        ports:
+          - "8090:8080"
+        environment:
+          - DB_TYPE=postgresql
+          - DB_HOST=db
+          - DB_PORT=5432
+          - DB_USER=postgres
+          - DB_PASSWORD=sola
+#          - DB_NAME_SOLA=sola
+        volumes:
+          # Relative path on the Docker host data directory
+          - $HOME/sola-docker-data/jasperserver-import:/jasperserver-import
+        depends_on:
+          - db
+           # Modify name of sola database (from sola) in following command if different
+#        command: ["./wait-for-postgres.sh", "db", "sola"]
+        networks:
+           sola_cs:
+
+    # Container that deploys pgAdmin4 to allow administration of the SOLA database. Accessible on localhost:80
+    # with username=db@flossola.org and passwd=sola 	   
+    dbadmin:
+        image: dpage/pgadmin4
+        container_name: db-admin
+        restart: always
+        ports:
+          - "80:80"
+        volumes:
+            - $HOME/sola-docker-data/backups/adhoc:/backups
+        environment:
+           PGADMIN_DEFAULT_EMAIL: db@flossola.org
+           PGADMIN_DEFAULT_PASSWORD: sola
+        networks:
+           sola_cs: 
+#
+    cs-backups:
+        image: prodrigestivill/postgres-backup-local
+        container_name: sola-db-backups
+        restart: always
+        volumes:
+#            - /var/opt/pgbackups:/backups
+            - $HOME/sola-docker-data/backups/pg-cs:/backups
+        links:
+            - db
+        depends_on:
+            - db
+        environment:
+#            - POSTGRES_HOST=localhost
+            - POSTGRES_HOST=192.168.1.71
+            - POSTGRES_DB=sola
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=sola
+         #  - POSTGRES_PASSWORD_FILE=/run/secrets/db_password <-- alternative for POSTGRES_PASSWORD (to use with docker secrets)
+            - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+            - SCHEDULE=@daily
+            - BACKUP_KEEP_DAYS=7
+            - BACKUP_KEEP_WEEKS=4
+            - BACKUP_KEEP_MONTHS=6
+            - HEALTHCHECK_PORT=85
+        networks:
+           sola_cs:
+
+ # Uses https://hub.docker.com/r/oscarfonts/geoserver. Exposes Geoserver on port 8085
+ # IMPORTANT: Replace /C//Work/Lidar_Imagery with the location of your data_dir on your local computer.  The path needs to use 
+ #            unix style path names so if using Windows, need to use /C// instead of c:\
+    geoserver:
+        image: oscarfonts/geoserver
+        container_name: sola-geoserver
+        restart: always
+        ports:
+         - "8085:8080"
+        volumes:
+#          - /C//Work/Lidar_Imagery:/var/local/geoserver
+          - $HOME/sola-docker-data/geoserver_data:/var/local/geoserver
+        networks:
+           sola_cs:    
