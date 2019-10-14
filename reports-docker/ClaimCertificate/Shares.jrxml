@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-12-10T19:41:57 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Shares" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="Bundle" uuid="de938806-95a0-47e1-a67f-d0883e81c25e">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SOLA_DATAADAPTER.xml"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="claim_id" class="java.lang.String"/>
+	<parameter name="lang" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT sh.id as share_id, sh.nominator, sh.denominator, sh.percentage, p.name, p.last_name, 
+get_translation(idt.display_value, $P{lang}) as id_type_name, p.id_number, p.birth_date, get_translation(gt.display_value, $P{lang}) as gender_name,
+p.mobile_phone, p.phone, p.email, p.address, p.is_person
+FROM opentenure.claim_share sh 
+ LEFT JOIN (opentenure.party_for_claim_share psh 
+   INNER JOIN ((opentenure.party p
+     LEFT JOIN party.id_type idt 
+     ON p.id_type_code = idt.code)
+     LEFT JOIN party.gender_type gt
+     ON p.gender_code = gt.code) 
+   ON psh.party_id = p.id) 
+ ON sh.id = psh.claim_share_id
+WHERE sh.claim_id = $P{claim_id}  and (sh.status = 'a' or sh.status is null)]]>
+	</queryString>
+	<field name="share_id" class="java.lang.String"/>
+	<field name="nominator" class="java.lang.Integer"/>
+	<field name="denominator" class="java.lang.Integer"/>
+	<field name="percentage" class="java.lang.Double"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="last_name" class="java.lang.String"/>
+	<field name="id_type_name" class="java.lang.String"/>
+	<field name="id_number" class="java.lang.String"/>
+	<field name="birth_date" class="java.sql.Date"/>
+	<field name="gender_name" class="java.lang.String"/>
+	<field name="mobile_phone" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="is_person" class="java.lang.Boolean"/>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{share_id}]]></groupExpression>
+		<groupHeader>
+			<band height="44">
+				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				<textField pattern="">
+					<reportElement x="2" y="3" width="228" height="18" uuid="2d17547d-1e8c-41b9-8f24-79054aebf340"/>
+					<textElement>
+						<font fontName="SansSerif" size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{share} + " " + Math.round($F{percentage}) + "%"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="3" y="24" width="218" height="20" backcolor="#D9D9D9" uuid="408020eb-6895-49c7-9e3f-4d37b3e12dd8"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="12" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="221" y="24" width="182" height="20" backcolor="#D9D9D9" uuid="b5808974-9751-4f67-98a0-33d6ee29a284"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="12" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{id_data}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="403" y="24" width="127" height="20" backcolor="#D9D9D9" uuid="a52947cd-5676-4e8e-86cb-564c012ddfc0"/>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="SansSerif" size="12" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$R{dob}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="3" y="0" width="218" height="20" uuid="94218009-8506-46f2-b4bd-493ff65d9d0d"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name} + ($F{last_name} == null ? "" : " " + $F{last_name})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToBandHeight" x="221" y="0" width="182" height="20" uuid="f9357954-ea4c-4f3d-82db-dc223b8d5186"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{id_type_name} == null ? "" : $F{id_type_name}) + ($F{id_number} == null ? "" : " #" + $F{id_number})]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM d, yyyy">
+				<reportElement stretchType="RelativeToBandHeight" x="403" y="0" width="127" height="20" uuid="ba12c516-fe64-4eae-adba-5abad4761fe9"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{birth_date} == null ? "" : $F{birth_date})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
