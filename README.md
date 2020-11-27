@@ -1,2 +1,2 @@
 # docker
-Files supporting the npullar/sola-community-db and npullar/sola-community-server dockerhub repositories (being a Docker implementation of SOLA Community Server)
+This repository contains source codes for creating SOLA Community Server docker images as well as docker-compose files, putting them all together.

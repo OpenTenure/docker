@@ -1,0 +1,20 @@
+<layer>
+  <name>boundaries</name>
+  <id>LayerInfoImpl-aa4544a:16d50f8adb1:-7fd7</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--2b078fca:165f104a77a:-7ff7</id>
+  </defaultStyle>
+  <styles class="linked-hash-set">
+    <style>
+      <id>StyleInfoImpl--2b078fca:165f104a77a:-7ff7</id>
+    </style>
+  </styles>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl-aa4544a:16d50f8adb1:-7fd8</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>
