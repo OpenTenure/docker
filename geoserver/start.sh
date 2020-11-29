@@ -26,7 +26,7 @@ done
 # Now we copy data, after data volume is created in the dockerfile and OT folder doesn't exist
 if [ ! -d "${GEOSERVER_DATA_DIR}/workspaces/opentenure" ]; then
 	# As this is the first start, OpenTenure DB may not be created yet. Let's wait another 10 seconds
-	sleep 10
+	sleep 40
 	
     mv $GEOSERVER_INSTALL_DIR/data/* ${GEOSERVER_DATA_DIR}
 
