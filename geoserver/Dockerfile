@@ -8,6 +8,7 @@ MAINTAINER FAO SOLA Team
 
 ENV SOLA_DB sola
 ENV DB_HOST db
+ENV GEOSERVER_CSRF sola-demo.org
 
 ENV GEOSERVER_VERSION 2.18.0
 ENV GEOSERVER_DATA_DIR /var/local/geoserver
@@ -24,6 +25,7 @@ RUN set -x \
 	&& apt-get install -yq ttf-mscorefonts-installer \
 	&& rm -rf /var/lib/apt/lists/*
 
+ADD .do_deploy_gs /.do_deploy_gs
 ADD wait-for-it.sh /wait-for-it.sh
 	
 # GeoServer. Demo layers will be deleted
@@ -57,7 +59,11 @@ RUN sed -i '\:</web-app>:i\
 <filter-mapping>\n\
     <filter-name>CorsFilter</filter-name>\n\
     <url-pattern>/*</url-pattern>\n\
-</filter-mapping>' ${GEOSERVER_INSTALL_DIR}/WEB-INF/web.xml
+</filter-mapping>\n\
+<context-param>\n\
+  <param-name>GEOSERVER_CSRF_WHITELIST</param-name>\n\
+  <param-value>'"${GEOSERVER_CSRF}"'</param-value>\n\
+</context-param>' ${GEOSERVER_INSTALL_DIR}/WEB-INF/web.xml
 
 # Tomcat environment
 ENV CATALINA_OPTS "-server -Djava.awt.headless=true \

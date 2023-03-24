@@ -58,6 +58,7 @@ services:
     environment:
       - DB_HOST=db
       - SOLA_DB=${DB_NAME}
+      - GEOSERVER_CSRF=${GEOSERVER_CSRF_WL}
       - TZ=${TIME_ZONE}
     command: ${DB_PASSWORD}
     networks:

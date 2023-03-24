@@ -35,4 +35,10 @@ if [ ! -d "${GEOSERVER_DATA_DIR}/workspaces/opentenure" ]; then
 	unset $1
 fi
 
+# check if we need to bootstrap Geoserver
+if [ -f "/.do_deploy_gs" ]; then
+	sed -i -e "s|sola-demo.org|$GEOSERVER_CSRF|g;" ${GEOSERVER_INSTALL_DIR}/WEB-INF/web.xml
+	rm /.do_deploy_gs
+fi
+
 su tomcat -c "/usr/local/tomcat/bin/catalina.sh run"
