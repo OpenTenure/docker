@@ -1,10 +1,11 @@
+# Original image used as prototype is at retriever/jasperserver
 FROM tomcat:7
-MAINTAINER FAO SOLA Team
 
-ENV JASPERSERVER_VERSION 6.4.0
+ENV JASPERSERVER_VERSION 7.8.0
+ENV BUILDOMATIC_MODE=script
 
 # Execute all in one layer so that it keeps the image as small as possible
-RUN wget "https://sourceforge.net/projects/jasperserver/files/JasperServer/JasperReports%20Server%20Community%20Edition%20${JASPERSERVER_VERSION}/TIB_js-jrs-cp_${JASPERSERVER_VERSION}_bin.zip/download" \
+RUN wget "https://sourceforge.net/projects/jasperserver/files/JasperServer/JasperReports%20Server%20Community%20edition%20${JASPERSERVER_VERSION}/TIB_js-jrs-cp_${JASPERSERVER_VERSION}_bin.zip/download" \
          -O /tmp/jasperserver.zip  && \
     unzip /tmp/jasperserver.zip -d /usr/src/ && \
     rm /tmp/jasperserver.zip && \

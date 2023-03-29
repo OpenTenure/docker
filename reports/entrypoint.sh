@@ -45,7 +45,7 @@ if [ -f "/.do_deploy_jasperserver" ]; then
     #rm -rf /tmp/*
 
 	# import default reports
-	./js-import.sh --input-zip /reports.zip
+	./js-import.sh --input-zip /reports.zip --keyalias deprecatedImportExportEncSecret
 	
 	# delete reports
 	rm /reports.zip
