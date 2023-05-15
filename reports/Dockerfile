@@ -1,11 +1,15 @@
 # Original image used as prototype is at retriever/jasperserver
-FROM tomcat:7
+#FROM tomcat:7
+FROM tomcat:9-jre11
 
-ENV JASPERSERVER_VERSION 7.8.0
+ENV JASPERSERVER_VERSION 8.2.0
 ENV BUILDOMATIC_MODE=script
 
 # Execute all in one layer so that it keeps the image as small as possible
-RUN wget "https://sourceforge.net/projects/jasperserver/files/JasperServer/JasperReports%20Server%20Community%20edition%20${JASPERSERVER_VERSION}/TIB_js-jrs-cp_${JASPERSERVER_VERSION}_bin.zip/download" \
+#RUN wget "https://sourceforge.net/projects/jasperserver/files/JasperServer/JasperReports%20Server%20Community%20edition%20${JASPERSERVER_VERSION}/TIB_js-jrs-cp_${JASPERSERVER_VERSION}_bin.zip/download" \
+RUN apt-get update -y && apt-get install -y unzip && apt install -y git
+
+RUN wget "https://sourceforge.net/projects/jasperserver/files/JasperServer/JasperReports%20Server%20Community%20Edition%208.2.0/TIB_js-jrs-cp_8.2.0_bin.zip/download" \
          -O /tmp/jasperserver.zip  && \
     unzip /tmp/jasperserver.zip -d /usr/src/ && \
     rm /tmp/jasperserver.zip && \
@@ -34,9 +38,22 @@ VOLUME ["/jasperserver-import"]
 ADD drivers/db2jcc4.jar /usr/src/jasperreports-server/buildomatic/conf_source/db/app-srv-jdbc-drivers/db2jcc4.jar
 ADD drivers/mysql-connector-java-5.1.44-bin.jar /usr/src/jasperreports-server/buildomatic/conf_source/db/app-srv-jdbc-drivers/mysql-connector-java-5.1.44-bin.jar
 
-# Copy server.xml and context.xml with sola JNDI
-ADD ./conf/server.xml /usr/local/tomcat/conf/
+# Copy context.xml and adjust server.xml with sola JNDI
 ADD ./conf/context.xml /usr/local/tomcat/conf/
+RUN sed -i '\:</GlobalNamingResources>:i\
+<Resource name="jdbc/sola" \n\
+	url="jdbc:postgresql://DB_HOST:DB_PORT/DB_NAME" \n\
+	auth="Container" \n\
+	type="javax.sql.DataSource" \n\
+	factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" \n\
+	driverClassName="org.postgresql.Driver" \n\
+	username="DB_USER" \n\
+	password="DB_PASS" \n\
+	maxActive="100" \n\
+	maxIdle="10" \n\
+	maxWait="-1" \n\
+	jdbcInterceptors="org.apache.tomcat.jdbc.pool.interceptor.ResetAbandonedTimer" />' /usr/local/tomcat/conf/server.xml
+
 
 # Use the minimum recommended settings to start-up
 # as per http://community.jaspersoft.com/documentation/jasperreports-server-install-guide/v561/setting-jvm-options-application-servers

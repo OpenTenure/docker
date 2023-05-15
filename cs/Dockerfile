@@ -2,7 +2,7 @@
 # for hosting SOLA Community Server. Note that pre-built docker images for the SOLA solutions are 
 # available from DockerHub at https://hub.docker.com/u/mcdowella
 
-FROM payara/server-full:5.2020.6
+FROM payara/server-full:5.2022.5
 
 # Database connection parameters
 ENV SOLA_DB sola

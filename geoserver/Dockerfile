@@ -10,7 +10,7 @@ ENV SOLA_DB sola
 ENV DB_HOST db
 ENV GEOSERVER_CSRF sola-demo.org
 
-ENV GEOSERVER_VERSION 2.18.0
+ENV GEOSERVER_VERSION 2.23.0
 ENV GEOSERVER_DATA_DIR /var/local/geoserver
 ENV GEOSERVER_INSTALL_DIR /usr/local/geoserver
 ENV GEOSERVER_EXT_DIR /var/local/geoserver-exts
@@ -19,11 +19,13 @@ ENV GEOSERVER_EXT_DIR /var/local/geoserver-exts
 #RUN echo "Acquire::http { Proxy \"http://`/sbin/ip route|awk '/default/ { print $3 }'`:3142\"; };" > /etc/apt/apt.conf.d/71-apt-cacher-ng
 
 # Microsoft fonts
-RUN echo "deb http://httpredir.debian.org/debian stretch contrib" >> /etc/apt/sources.list
-RUN set -x \
-	&& apt-get update \
-	&& apt-get install -yq ttf-mscorefonts-installer \
-	&& rm -rf /var/lib/apt/lists/*
+#RUN echo "deb http://archive.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list
+#RUN echo "deb http://archive.debian.org/debian stretch main" >> /etc/apt/sources.list
+
+#RUN set -x \
+#	&& apt-get update \
+#	&& apt-get install -yq ttf-mscorefonts-installer \
+#	&& rm -rf /var/lib/apt/lists/*
 
 ADD .do_deploy_gs /.do_deploy_gs
 ADD wait-for-it.sh /wait-for-it.sh
