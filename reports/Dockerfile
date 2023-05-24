@@ -38,6 +38,9 @@ VOLUME ["/jasperserver-import"]
 ADD drivers/db2jcc4.jar /usr/src/jasperreports-server/buildomatic/conf_source/db/app-srv-jdbc-drivers/db2jcc4.jar
 ADD drivers/mysql-connector-java-5.1.44-bin.jar /usr/src/jasperreports-server/buildomatic/conf_source/db/app-srv-jdbc-drivers/mysql-connector-java-5.1.44-bin.jar
 
+# Copy custom font
+ADD fonts/Padauk.jar /usr/src/jasperreports-server/buildomatic/conf_source/db/app-srv-jdbc-drivers/Padauk.jar
+
 # Copy context.xml and adjust server.xml with sola JNDI
 ADD ./conf/context.xml /usr/local/tomcat/conf/
 RUN sed -i '\:</GlobalNamingResources>:i\
