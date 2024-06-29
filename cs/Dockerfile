@@ -2,7 +2,7 @@
 # for hosting SOLA Community Server. Note that pre-built docker images for the SOLA solutions are 
 # available from DockerHub at https://hub.docker.com/u/mcdowella
 
-FROM payara/server-full:5.2022.5
+FROM payara/server-full:6.2024.5-jdk21
 
 # Database connection parameters
 ENV SOLA_DB sola
@@ -28,17 +28,15 @@ USER root
 ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
 RUN apt-get update && apt-get install -y tzdata
+RUN apt-get install psmisc
 
 # Copy files required for SOLA into the domain and sets up the file access permissions
-RUN mv ${PAYARA_DIR}/temp/jackson* ${PAYARA_DIR}/glassfish/modules/. && \
-	mv ${PAYARA_DIR}/temp/postgresql-42* ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/lib/ && \
-	chown -R payara:payara ${PAYARA_DIR}/glassfish/modules/jackson* && \
-    chmod 755 ${PAYARA_DIR}/glassfish/modules/jackson* && \
+RUN mv ${PAYARA_DIR}/temp/* ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/lib/ && \
     chown -R payara:payara ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/lib/*.jar && \
 	chmod 755 ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/lib/*.jar && \
 	chown -R payara:payara ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/config/ && \
 	chmod a+x /entrypoint.sh && \
     chmod a+x /wait-for-it.sh
 
-ENTRYPOINT ["/tini", "--", "/entrypoint.sh"]
+ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
 CMD ["sola"]

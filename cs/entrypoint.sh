@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # wait for the database to start before connecting
+
 /wait-for-it.sh $DB_HOST:$DB_PORT -t 90
 
 PAYARA_DOMAIN=domain1
@@ -32,7 +33,6 @@ if [ -f "/.do_deploy_cs" ]; then
 	echo "create-resource-ref --enabled=true --target=server jdbc/${DATAPOOL}" >> "$CMD_FILE"
 	echo "create-auth-realm --classname=com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm --property=jaas-context=jdbcRealm:datasource-jndi=jdbc/${DATAPOOL}:user-table=system.active_users:user-name-column=username:password-column=passwd:group-table=system.user_roles:group-name-column=rolename: --target=server-config SolaRealm" >> "$CMD_FILE"
 	echo "delete-jvm-options -- -client" >> "$CMD_FILE"
-	echo "create-jvm-options -- -server" >> "$CMD_FILE"
 	echo "set-log-levels --target=server-config org.sola.services=INFO:java.sql.ResultSet=OFF:java.sql.Connection=FINE:java.sql=FINE" >> "$CMD_FILE"
 	
 	${PAYARA_DIR}/bin/asadmin --user=${ADMIN_USER} --passwordfile=${PASSWORD_FILE} start-domain ${DOMAIN_NAME} 
@@ -42,7 +42,15 @@ if [ -f "/.do_deploy_cs" ]; then
 	${PAYARA_DIR}/bin/asadmin --user=${ADMIN_USER} --passwordfile=${PASSWORD_FILE} set configs.config.server-config.network-config.network-listeners.network-listener.http-listener-2.port=${HTTPS_PORT}
 	${PAYARA_DIR}/bin/asadmin --user=${ADMIN_USER} --passwordfile=${PASSWORD_FILE} set configs.config.server-config.network-config.network-listeners.network-listener.admin-listener.port=${ADMIN_PORT}
 	${PAYARA_DIR}/bin/asadmin --user=${ADMIN_USER} --passwordfile=${PASSWORD_FILE} stop-domain ${DOMAIN_NAME} 
-
+	
+	# Kill ports as they hang up sometimes
+	fuser -k 4848/tcp
+	fuser -k 8080/tcp
+	fuser -k 8181/tcp
+	fuser -k ${HTTP_PORT}/tcp
+	fuser -k ${HTTPS_PORT}/tcp
+	fuser -k ${ADMIN_PORT}/tcp
+	
 	# Clean up
 	unset PAYARA_PASSWD
 	unset DATABASE_PASS
@@ -54,3 +62,4 @@ if [ -f "/.do_deploy_cs" ]; then
 fi
 
 ${SCRIPT_DIR}/entrypoint.sh
+

@@ -68,25 +68,6 @@ services:
     volumes:
      - ${GEOSERVER_DATA}:/var/local/geoserver
      
-  reports:
-    image: solovov/ot-reports
-    container_name: ot-reports
-    ports:
-      - "${REPORTS_PORT}:8080"
-    environment:
-      - DB_TYPE=postgresql
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=${DB_PASSWORD}
-      - SOLA_DB_NAME=${DB_NAME}
-      - TZ=${TIME_ZONE}
-    command: ${DB_PASSWORD}
-    depends_on:
-      - cs
-    networks:
-       sola_cs:
-
   dbadmin:
     image: solovov/ot-dbadmin
     container_name: ot-db-admin

@@ -1,6 +1,7 @@
 # This Dockerflle can be used to build and configure images for the SOLA OpenTenure database based on a Postgres PostGIS image.
 
-FROM mdillon/postgis:11
+#FROM mdillon/postgis:11
+FROM postgis/postgis:16-master
 
 ENV SOLA_HOME /home/sola
 
