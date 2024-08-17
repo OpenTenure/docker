@@ -21,4 +21,4 @@ COPY scripts/ ${SOLA_HOME}/
 RUN mv /docker-entrypoint-initdb.d/*.sh ${SOLA_HOME}/. && \
    cp ${SOLA_HOME}/create_database.sh /docker-entrypoint-initdb.d/10.create_database.sh  && \
    chmod 755 /docker-entrypoint-initdb.d/10.create_database.sh && \
-    chmod 777 ${SOLA_HOME}
+   chmod 777 ${SOLA_HOME} 

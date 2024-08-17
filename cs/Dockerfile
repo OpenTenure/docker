@@ -14,6 +14,7 @@ ENV ADMIN_PORT 4848
 
 RUN mkdir -p ${PAYARA_DIR}/temp/
 COPY libs/ ${PAYARA_DIR}/temp/ 
+COPY psql /usr/lib/psql
 
 COPY cs-services.ear /
 
@@ -36,7 +37,16 @@ RUN mv ${PAYARA_DIR}/temp/* ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/lib/ 
 	chmod 755 ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/lib/*.jar && \
 	chown -R payara:payara ${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/config/ && \
 	chmod a+x /entrypoint.sh && \
-    chmod a+x /wait-for-it.sh
+    chmod a+x /wait-for-it.sh 
+
+RUN chown -R payara:payara /usr/lib/psql/
+
+RUN ln -s /usr/lib/psql/libpq.so.5.16 /usr/lib/libpq.so.5 && \
+    ln -s /usr/lib/psql/libssl.so.1.1 /usr/lib/libssl.so.1.1 && \
+    ln -s /usr/lib/psql/libcrypto.so.1.1 /usr/lib/libcrypto.so.1.1 && \
+    ln -s /usr/lib/psql/libldap_r-2.4.so.2.11.5 /usr/lib/libldap_r-2.4.so.2 && \
+    ln -s /usr/lib/psql/liblber-2.4.so.2.11.5 /usr/lib/liblber-2.4.so.2 && \
+    ln -s /usr/lib/psql/libsasl2.so.2.0.25 /usr/lib/libsasl2.so.2
 
 ENTRYPOINT ["tini", "--", "/entrypoint.sh"]
 CMD ["sola"]
