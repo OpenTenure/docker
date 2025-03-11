@@ -10,7 +10,7 @@ ENV SOLA_DB sola
 ENV DB_HOST db
 ENV GEOSERVER_CSRF sola-demo.org
 
-ENV GEOSERVER_VERSION 2.25.1
+ENV GEOSERVER_VERSION 2.26.2
 ENV GEOSERVER_DATA_DIR /var/local/geoserver
 ENV GEOSERVER_INSTALL_DIR /usr/local/geoserver
 ENV GEOSERVER_EXT_DIR /var/local/geoserver-exts
@@ -27,16 +27,19 @@ ENV GEOSERVER_EXT_DIR /var/local/geoserver-exts
 #	&& apt-get install -yq ttf-mscorefonts-installer \
 #	&& rm -rf /var/lib/apt/lists/*
 
+
 ADD .do_deploy_gs /.do_deploy_gs
 ADD wait-for-it.sh /wait-for-it.sh
-	
+RUN apt-get update \
+    && apt-get install unzip
+
 # GeoServer. Demo layers will be deleted
 ADD conf/geoserver.xml /usr/local/tomcat/conf/Catalina/localhost/geoserver.xml
 RUN mkdir ${GEOSERVER_DATA_DIR} \
     && mkdir ${GEOSERVER_INSTALL_DIR} \
 	&& cd ${GEOSERVER_INSTALL_DIR} \
 	&& wget http://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip \
-	&& unzip geoserver-${GEOSERVER_VERSION}-war.zip \
+    && unzip geoserver-${GEOSERVER_VERSION}-war.zip \
 	&& unzip geoserver.war \
 	&& rm -rf geoserver-${GEOSERVER_VERSION}-war.zip geoserver.war target *.txt data/* \
 	&& mkdir ${GEOSERVER_INSTALL_DIR}/data/workspaces
